@@ -5,11 +5,14 @@
 ## X-URL:
 
 CFLAGS=-g -Wall
+OBJECTS=ifaddrs.o
 
 all: main
 
+main: $(OBJECTS)
+
 clean:
-	rm *~ *.o main
+	-rm -f *~ *.o main
 
 .PHONY: all clean
 
