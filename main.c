@@ -53,7 +53,7 @@ int main(int argc, char* argv[]) {
 	    struct sockaddr* a = rp->ai_addr;
 	    struct in6_addr src6 = ((struct sockaddr_in6*)a)->sin6_addr;
 	    if(inet_ntop(rp->ai_family, &src6, formatted_addr, rp->ai_addrlen)) {
-		printf("%s\n", formatted_addr);
+		printf("%s%%%d\n", formatted_addr, ((struct sockaddr_in6*)a)->sin6_scope_id);
 	    } else {
 		printf("Ohno\n");
 	    }
