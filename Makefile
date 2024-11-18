@@ -6,4 +6,11 @@
 
 CFLAGS=-g -Wall
 
+all: main
+
+clean:
+	rm *~ *.o main
+
+.PHONY: all clean
+
 ### Makefile ends here
