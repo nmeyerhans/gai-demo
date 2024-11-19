@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include <arpa/inet.h>
 #include <sys/types.h>
@@ -18,12 +19,7 @@ int main(int argc, char* argv[]) {
     char hostname[128];
     char formatted_addr[128];
     char ifname[IFNAMSIZ];
-
-    if(argc >= 2) {
-	strncpy(hostname, argv[1], 128);
-    } else {
-	exit(1);
-    }
+    int ch;
 
     struct addrinfo  hints;
     struct addrinfo  *result, *rp;
@@ -33,6 +29,34 @@ int main(int argc, char* argv[]) {
     hints.ai_socktype = SOCK_DGRAM; /* Datagram socket */
     hints.ai_flags = 0;
     hints.ai_protocol = 0;          /* Any protocol */
+
+    while ((ch = getopt(argc, argv, "64")) != EOF) {
+	switch(ch) {
+	case '4':
+	    if (hints.ai_family == AF_INET6)
+		fprintf(stderr, "only one -4 or -6 option may be specified");
+	    hints.ai_family = AF_INET;
+	    break;
+	case '6':
+	    if (hints.ai_family == AF_INET)
+		fprintf(stderr, "only one -4 or -6 option may be specified");
+	    hints.ai_family = AF_INET6;
+	    break;
+	default:
+	    fprintf(stderr, "Usage error\n");
+	    exit(EXIT_FAILURE);
+	}
+    }
+
+    argc -= optind;
+    argv += optind;
+
+    if(argc == 1) {
+	strncpy(hostname, argv[0], 128);
+    } else {
+	fprintf(stderr, "argc is %d\n", argc);
+	exit(1);
+    }
 
     int s = getaddrinfo(hostname, NULL, &hints, &result);
     if (s != 0) {
